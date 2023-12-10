@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/Servicearealines_2.js"></script>
+        <script src="data/TitikHotspot_3.js"></script>
+        <script src="data/TitikPosPemadamKebakaran_4.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        map.createPane('pane_GoogleHybrid_0');
+        map.getPane('pane_GoogleHybrid_0').style.zIndex = 400;
+        var layer_GoogleHybrid_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleHybrid_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_GoogleHybrid_0;
+        map.addLayer(layer_GoogleHybrid_0);
+        map.createPane('pane_Heatmap_1');
+        map.getPane('pane_Heatmap_1').style.zIndex = 401;
+        var img_Heatmap_1 = 'data/Heatmap_1.png';
+        var img_bounds_Heatmap_1 = [[-7.35755569407088,112.59992929460903],[-7.191715835903981,112.81973337648034]];
+        var layer_Heatmap_1 = new L.imageOverlay(img_Heatmap_1,
+                                              img_bounds_Heatmap_1,
+                                              {pane: 'pane_Heatmap_1'});
+        bounds_group.addLayer(layer_Heatmap_1);
+        map.addLayer(layer_Heatmap_1);
+        function pop_Servicearealines_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Loc'] !== null ? autolinker.link(feature.properties['Loc'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Kecamatan'] !== null ? autolinker.link(feature.properties['Kecamatan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Kelurahan'] !== null ? autolinker.link(feature.properties['Kelurahan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['type'] !== null ? autolinker.link(feature.properties['type'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['start'] !== null ? autolinker.link(feature.properties['start'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Servicearealines_2_0() {
+            return {
+                pane: 'pane_Servicearealines_2',
+                opacity: 1,
+                color: 'rgba(251,154,153,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Servicearealines_2');
+        map.getPane('pane_Servicearealines_2').style.zIndex = 402;
+        map.getPane('pane_Servicearealines_2').style['mix-blend-mode'] = 'normal';
+        var layer_Servicearealines_2 = new L.geoJson(json_Servicearealines_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Servicearealines_2',
+            layerName: 'layer_Servicearealines_2',
+            pane: 'pane_Servicearealines_2',
+            onEachFeature: pop_Servicearealines_2,
+            style: style_Servicearealines_2_0,
+        });
+        bounds_group.addLayer(layer_Servicearealines_2);
+        map.addLayer(layer_Servicearealines_2);
+        function pop_TitikHotspot_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lokasi Tit'] !== null ? autolinker.link(feature.properties['Lokasi Tit'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lokasi T_1'] !== null ? autolinker.link(feature.properties['Lokasi T_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lokasi T_2'] !== null ? autolinker.link(feature.properties['Lokasi T_2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lokasi T_3'] !== null ? autolinker.link(feature.properties['Lokasi T_3'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Lokasi T_4'] !== null ? autolinker.link(feature.properties['Lokasi T_4'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_TitikHotspot_3_0() {
+            return {
+                pane: 'pane_TitikHotspot_3',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(184,29,36,1.0)',
+                interactive: true,
+            }
+        }
+        function style_TitikHotspot_3_1() {
+            return {
+                pane: 'pane_TitikHotspot_3',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(229,9,20,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_TitikHotspot_3');
+        map.getPane('pane_TitikHotspot_3').style.zIndex = 403;
+        map.getPane('pane_TitikHotspot_3').style['mix-blend-mode'] = 'normal';
+        var layer_TitikHotspot_3 = new L.geoJson.multiStyle(json_TitikHotspot_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_TitikHotspot_3',
+            layerName: 'layer_TitikHotspot_3',
+            pane: 'pane_TitikHotspot_3',
+            onEachFeature: pop_TitikHotspot_3,
+            pointToLayers: [function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_TitikHotspot_3_0(feature));
+            },function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_TitikHotspot_3_1(feature));
+            },
+        ]});
+        bounds_group.addLayer(layer_TitikHotspot_3);
+        map.addLayer(layer_TitikHotspot_3);
+        function pop_TitikPosPemadamKebakaran_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Lokasi</th>\
+                        <td>' + (feature.properties['Loc'] !== null ? autolinker.link(feature.properties['Loc'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Kecamatan</th>\
+                        <td>' + (feature.properties['Kecamatan'] !== null ? autolinker.link(feature.properties['Kecamatan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Kelurahan</th>\
+                        <td>' + (feature.properties['Kelurahan'] !== null ? autolinker.link(feature.properties['Kelurahan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_TitikPosPemadamKebakaran_4_0(feature) {
+            switch(String(feature.properties['Loc'])) {
+                case 'Dinas Pemadam Balas Klumprik':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(94,14,126,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Bulak':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(65,67,167,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Gunung Anyar':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(71,113,233,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Jambangan':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(62,156,254,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Kalirungkut':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(33,198,225,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Kebakaran Kota Surabaya':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(27,229,181,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Keputih':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(72,248,130,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Pakal':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(137,255,77,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Pakuwon City':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(187,245,52,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Pegirian':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(226,220,56,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Pos 1 Ende TVRI':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,185,56,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Sukolilo':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,139,38,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Tambak Oso Wilangun':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(239,89,17,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Warugunung':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(133,105,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pemadam Kebakaran Pos Menur':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(172,1,152,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 6.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(122,4,3,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        function style_TitikPosPemadamKebakaran_4_1(feature) {
+            switch(String(feature.properties['Loc'])) {
+                case 'Dinas Pemadam Balas Klumprik':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(94,14,126,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Bulak':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(65,67,167,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Gunung Anyar':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(71,113,233,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Jambangan':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(62,156,254,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Kalirungkut':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(33,198,225,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Kebakaran Kota Surabaya':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(27,229,181,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Keputih':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(72,248,130,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Pakal':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(137,255,77,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Pakuwon City':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(187,245,52,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Pegirian':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(226,220,56,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Pos 1 Ende TVRI':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,185,56,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Sukolilo':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,139,38,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Tambak Oso Wilangun':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(239,89,17,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dinas Pemadam Warugunung':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(133,105,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pemadam Kebakaran Pos Menur':
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(172,1,152,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_TitikPosPemadamKebakaran_4',
+                radius: 1.4,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(122,4,3,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_TitikPosPemadamKebakaran_4');
+        map.getPane('pane_TitikPosPemadamKebakaran_4').style.zIndex = 404;
+        map.getPane('pane_TitikPosPemadamKebakaran_4').style['mix-blend-mode'] = 'normal';
+        var layer_TitikPosPemadamKebakaran_4 = new L.geoJson.multiStyle(json_TitikPosPemadamKebakaran_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_TitikPosPemadamKebakaran_4',
+            layerName: 'layer_TitikPosPemadamKebakaran_4',
+            pane: 'pane_TitikPosPemadamKebakaran_4',
+            onEachFeature: pop_TitikPosPemadamKebakaran_4,
+            pointToLayers: [function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_TitikPosPemadamKebakaran_4_0(feature));
+            },function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_TitikPosPemadamKebakaran_4_1(feature));
+            },
+        ]});
+        bounds_group.addLayer(layer_TitikPosPemadamKebakaran_4);
+        map.addLayer(layer_TitikPosPemadamKebakaran_4);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'Titik Pos Pemadam Kebakaran<br /><table><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamBalasKlumprik0.png" /></td><td>Dinas Pemadam Balas Klumprik</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamBulak1.png" /></td><td>Dinas Pemadam Bulak</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamGunungAnyar2.png" /></td><td>Dinas Pemadam Gunung Anyar</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamJambangan3.png" /></td><td>Dinas Pemadam Jambangan</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamKalirungkut4.png" /></td><td>Dinas Pemadam Kalirungkut</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamKebakaranKotaSurabaya5.png" /></td><td>Dinas Pemadam Kebakaran Kota Surabaya</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamKeputih6.png" /></td><td>Dinas Pemadam Keputih</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamPakal7.png" /></td><td>Dinas Pemadam Pakal</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamPakuwonCity8.png" /></td><td>Dinas Pemadam Pakuwon City</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamPegirian9.png" /></td><td>Dinas Pemadam Pegirian</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamPos1EndeTVRI10.png" /></td><td>Dinas Pemadam Pos 1 Ende TVRI</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamSukolilo11.png" /></td><td>Dinas Pemadam Sukolilo</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamTambakOsoWilangun12.png" /></td><td>Dinas Pemadam Tambak Oso Wilangun</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_DinasPemadamWarugunung13.png" /></td><td>Dinas Pemadam Warugunung</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_PemadamKebakaranPosMenur14.png" /></td><td>Pemadam Kebakaran Pos Menur</td></tr><tr><td style="text-align: center;"><img src="legend/TitikPosPemadamKebakaran_4_15.png" /></td><td></td></tr></table>': layer_TitikPosPemadamKebakaran_4,'<img src="legend/TitikHotspot_3.png" /> Titik Hotspot ': layer_TitikHotspot_3,'<img src="legend/Servicearealines_2.png" /> Service area (lines)': layer_Servicearealines_2,"Heatmap": layer_Heatmap_1,"Google Hybrid": layer_GoogleHybrid_0,}).addTo(map);
+        setBounds();
+        map.addControl(new L.Control.Search({
+            layer: layer_TitikPosPemadamKebakaran_4,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'Loc'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        L.ImageOverlay.include({
+            getBounds: function () {
+                return this._bounds;
+            }
+        });
+        </script>
+    </body>
+</html>
